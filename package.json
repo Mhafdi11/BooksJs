@@ -1,0 +1,26 @@
+{
+  "name": "pug",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "postcss src/input.css -o public/styles.css"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^10.4.16",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongoose": "^7.6.3",
+    "passport": "^0.6.0",
+    "postcss": "^8.4.31",
+    "postcss-cli": "^10.1.0",
+    "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

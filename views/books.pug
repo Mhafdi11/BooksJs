@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  div(class="min-h-screen bg-gray-100 flex items-center justify-center")
+    div(class="bg-white p-8 rounded shadow-md")
+      h1(class="text-2xl font-semibold mb-4") My Book Collection
+      ul(class="list-disc pl-4")
+        li(class="text-gray-600") Book 1: "Book Title 1" by Author 1
+        li(class="text-gray-600") Book 2: "Book Title 2" by Author 2
+        li(class="text-gray-600") Book 3: "Book Title 3" by Author 3
+      a(href="/logout" class="block text-blue-500 mt-4 hover:underline") Logout
