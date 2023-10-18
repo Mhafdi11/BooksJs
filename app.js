@@ -2,12 +2,14 @@ const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
-
+const passport = require('passport');
 const Collection = require("./mongo");
 
 const app = express();
 const port = 3000;
 
+//const initPassport = require("./passport-config");
+//initPassport(passport)
 
 app.use(express.json());
 app.use(express.static('src'));

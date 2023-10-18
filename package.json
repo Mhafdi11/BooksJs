@@ -16,6 +16,7 @@
     "express-session": "^1.17.3",
     "mongoose": "^7.6.3",
     "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
     "postcss": "^8.4.31",
     "postcss-cli": "^10.1.0",
     "pug": "^3.0.2"
