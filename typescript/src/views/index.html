@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Registration</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* You can add custom styles here */
+  </style>
+</head>
+<body class="bg-gray-100 p-4">
+  <div class="max-w-md mx-auto bg-white rounded p-8">
+    <h1 class="text-2xl font-bold mb-4">Register New Book</h1>
+    <form id="bookForm" class="space-y-4">
+      <input type="text" id="title" placeholder="Title" class="w-full border rounded p-2">
+      <input type="text" id="author" placeholder="Author" class="w-full border rounded p-2">
+      <input type="number" id="numberOfPages" placeholder="Number of Pages" class="w-full border rounded p-2">
+      <select id="status" class="w-full border rounded p-2">
+        <option value="Read">Read</option>
+        <option value="Re_read">Re-read</option>
+        <option value="DNF">Did Not Finish</option>
+        <option value="Currently_reading">Currently Reading</option>
+        <option value="Returned_unread">Returned Unread</option>
+    <option value="Want_to_read">Want to Read</option>
+    </select>
+      <input type="number" id="price" placeholder="Price" class="w-full border rounded p-2">
+      <input type="number" id="numberOfPagesRead" placeholder="Number of Pages Read" class="w-full border rounded p-2">
+      <select id="format" class="w-full border rounded p-2">
+        <option value="Print">Print</option>
+        <option value="PDF">PDF</option>
+        <option value="Ebook">Ebook</option>
+        <option value="AudioBook">AudioBook</option>
+      </select>
+      <input type="text" id="suggestedBy" placeholder="Suggested By" class="w-full border rounded p-2">
+      <input type="checkbox" id="finished" class="mr-2">
+      <label for="finished">Finished</label>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+  <div class="mt-8">
+
+     <!-- Display section for the list of books -->
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold mb-4">List of Books</h2>
+  </div>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold mb-4">Reading Progress</h2>
+
+    <div id="progressList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <!-- JavaScript will populate the reading progress here -->
+    </div>
+
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold mb-4">Global Summary</h2>
+
+    <div id="globalSummary">
+      <!-- JavaScript will populate the global summary here -->
+    </div>
+  </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('bookForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = {
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        numberOfPages: parseInt(document.getElementById('numberOfPages').value),
+        status: document.getElementById('status').value,
+        price: parseFloat(document.getElementById('price').value),
+        numberOfPagesRead: parseInt(document.getElementById('numberOfPagesRead').value),
+        format: document.getElementById('format').value,
+        suggestedBy: document.getElementById('suggestedBy').value,
+        finished: document.getElementById('finished').checked,
+      };
+
+      try {
+        const response = await fetch('/books/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+        console.log('Book created:', data);
+        alert('Book created successfully!');
+      } catch (error) {
+        console.error('Error creating book:', error);
+        alert('Failed to create book. Check the console for more details.');
+      }
+    });
+
+
+    // Function to fetch and display the reading progress for each book
+    const fetchAndDisplayProgress = async () => {
+  const response = await fetch('/books');
+  const data = await response.json();
+  const deleteString = "Delete";
+
+  const progressList = document.getElementById('progressList');
+
+  data.books.forEach(book => {
+    const card = document.createElement('div');
+    card.className = 'p-4 border rounded';
+    const progress = (book.numberOfPagesRead / book.numberOfPages) * 100;
+    card.innerHTML = `
+      <h3 class="text-lg font-semibold mb-2">${book.title}</h3>
+      <p><strong>Reading Progress:</strong> ${progress.toFixed(2)}%</p>
+      <button onclick="deleteBook('${book._id}')">${deleteString}</button>
+    `;
+
+    progressList.appendChild(card);
+  });
+};
+
+
+    // Function to display global summary of the total books read and total pages
+    const fetchAndDisplayGlobalSummary = async () => {
+      const response = await fetch('/books');
+      const data = await response.json();
+
+      const totalBooksRead = data.books.length;
+      const totalPagesRead = data.books.reduce((acc, book) => acc + book.numberOfPagesRead, 0);
+
+      const globalSummary = document.getElementById('globalSummary');
+      globalSummary.innerHTML = `
+        <p><strong>Total Books Read:</strong> ${totalBooksRead}</p>
+        <p><strong>Total Pages Read:</strong> ${totalPagesRead}</p>
+        
+      `;
+    };
+
+
+    // Function to fetch and display the list of books
+    const fetchAndDisplayBooks = async () => {
+      const response = await fetch('/books'); // Replace with your endpoint for getting all books
+      const data = await response.json();
+
+      const bookList = document.getElementById('bookList');
+
+      // Loop through the book data and create cards for each book
+      data.books.forEach(book => {
+        const card = document.createElement('div');
+        card.className = 'p-4 border rounded';
+        card.innerHTML = `
+          <h3 class="text-lg font-semibold mb-2">${book.title}</h3>
+          <p><strong>Author:</strong> ${book.author}</p>
+          <p><strong>Status:</strong> ${book.status}</p>
+          <!-- Add other details you want to display -->
+
+          <!-- For "Delete" button -->
+          <button onclick="deleteBook('${book._id}')">Delete</button>
+        `;
+
+        bookList.appendChild(card);
+      });
+    };
+
+    // Function to delete a book by ID
+   const deleteBook = async (bookId) => {
+  try {
+    const response = await fetch(`/books/delete/${bookId}`, {
+      method: 'DELETE',
+    });
+
+    const data = await response.json();
+    console.log('Book deleted:', data);
+    alert('Book deleted successfully!');
+
+    // Refresh the book list after deletion
+    document.getElementById('bookList').innerHTML = '';
+    fetchAndDisplayBooks();
+  } catch (error) {
+    console.error('Error deleting book:', error);
+    alert('Failed to delete book. Check the console for more details.');
+  }
+};
+
+    // Call functions to fetch and display reading progress and global summary
+    fetchAndDisplayProgress();
+    fetchAndDisplayGlobalSummary();
+
+    
+  </script>
+</body>
+</html>
