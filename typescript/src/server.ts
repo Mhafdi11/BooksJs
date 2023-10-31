@@ -20,14 +20,12 @@ mongoose.connect(config.mongo.url, { retryWrites: true, w: 'majority' })
   });
 
 const StartServer = () => {
-  // Apply middleware before defining routes
   router.use(express.urlencoded({ extended: true }));
   router.use(express.json());
 
   /* Routes */
   router.use('/books', bookRoutes);
   router.get('/add-book', (req, res) => {
-    // Send the HTML file when '/add-book' is accessed
     res.sendFile(path.join(__dirname,'views', 'index.html')); // Replace 'path_to_your_html_file' with the actual path to your HTML file
   });
 
@@ -39,10 +37,8 @@ const StartServer = () => {
     }
   });
 
-  // Define the server using http.createServer and pass the express app
   const server = http.createServer(router);
 
-  // Listen to the server
   server.listen(config.server.port, () => {
     console.log(`Server is running on port ${config.server.port}.`);
   });
